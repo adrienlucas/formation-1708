@@ -37,7 +37,7 @@ class HomepageController extends AbstractController
     }
 
     /**
-     * @Route("/show/{subject}", requirements={"subject": "[a-z]+"})
+     * @Route("/show/{subject}", methods={"GET"})
      */
     public function showString(string $subject): Response
     {
