@@ -25,7 +25,7 @@ class ContactController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Merci d\'avoir pris contact');
-            return $this->redirectToRoute('home_page');
+            return $this->redirectToRoute('homepage');
         }
         return $this->render('contact/index.html.twig', ['contactForm' => $form->createView() ]);
     }
