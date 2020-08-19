@@ -35,6 +35,20 @@ class ContactControllerTest extends WebTestCase
      */
     public function testTheContactFormDisplaysErrors()
     {
+        $client = static::createClient();
+        $client->request('GET', '/contact');
 
+        $this->assertResponseIsSuccessful();
+
+        $this->assertSelectorExists("#contact_email");
+        $this->assertSelectorExists("#contact_message");
+
+        $client->submitForm('Contacter', [
+            'contact[email]' => 'test',
+            'contact[message]' => str_repeat("a",300),
+        ]);
+
+        $this->assertSelectorTextContains('body > form > div:nth-child(1) > ul > li', 'This value is not a valid email address');
+        $this->assertSelectorTextContains('body > form > div:nth-child(2) > ul > li', 'This value is too long. It should have 256 characters or less');
     }
 }
