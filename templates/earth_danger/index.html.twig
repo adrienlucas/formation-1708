@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Is Earth in danger ?{% endblock %}
+
+{% block body %}
+    <h2>Is Earth in danger today ?</h2>
+    <div class="alert {{ isEarthInDanger ? 'alert-danger' : 'alert-primary' }}" >
+        {{ isEarthInDanger ? 'Fly you fools !' : 'No passa nada.' }}
+    </div>
+{% endblock %}

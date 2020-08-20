@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class ContactController extends AbstractController
 {
@@ -18,7 +19,9 @@ class ContactController extends AbstractController
     {
         $form = $this->createForm(ContactType::class);
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid())
+
+
+        if($this->isGranted('ROLE_ADMIN') && $form->isSubmitted() && $form->isValid())
         {
             $contact = $form->getData();
             $entityManager->persist($contact);
@@ -27,6 +30,7 @@ class ContactController extends AbstractController
             $this->addFlash('success', 'Merci d\'avoir pris contact');
             return $this->redirectToRoute('homepage');
         }
+
         return $this->render('contact/index.html.twig', ['contactForm' => $form->createView() ]);
     }
 

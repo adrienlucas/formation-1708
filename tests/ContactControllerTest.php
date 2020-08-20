@@ -19,6 +19,9 @@ class ContactControllerTest extends WebTestCase
         $this->assertSelectorExists("#contact_email");
         $this->assertSelectorExists("#contact_message");
 
+        $this->assertSelectorTextNotContains('body', 'This value is not a valid email address');
+        $this->assertSelectorTextNotContains('body', 'This value is too long. It should have 256 characters or less');
+
         $client->submitForm('Contacter', [
             'contact[email]' => 'test@smile.fr',
             'contact[message]' => 'test',
@@ -35,6 +38,7 @@ class ContactControllerTest extends WebTestCase
      */
     public function testTheContactFormDisplaysErrors()
     {
+        // Request the contact page
         $client = static::createClient();
         $client->request('GET', '/contact');
 
@@ -43,12 +47,23 @@ class ContactControllerTest extends WebTestCase
         $this->assertSelectorExists("#contact_email");
         $this->assertSelectorExists("#contact_message");
 
+        // Submit the form
         $client->submitForm('Contacter', [
             'contact[email]' => 'test',
             'contact[message]' => str_repeat("a",300),
         ]);
 
-        $this->assertSelectorTextContains('body > form > div:nth-child(1) > ul > li', 'This value is not a valid email address');
-        $this->assertSelectorTextContains('body > form > div:nth-child(2) > ul > li', 'This value is too long. It should have 256 characters or less');
+        // This is the only way to find the error message attached to #contact_message field
+        $errorMessageTag = $client->getCrawler()
+            ->filter('#contact_message')
+            ->previousAll()
+            ->eq(0)
+            ->filter('li');
+
+        $this->assertSame('This value is too long. It should have 256 characters or less.', $errorMessageTag->text());
+
+        $this->assertSelectorTextContains('form[name="contact"]', 'This value is not a valid email address');
+
+        $this->assertSelectorTextContains('body > form > div:nth-child(2) > ul > li', '');
     }
 }

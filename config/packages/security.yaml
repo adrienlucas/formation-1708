@@ -1,11 +1,26 @@
 security:
+    encoders:
+        App\Entity\Administrator: auto
+
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         users_in_memory: { memory: null }
+        administrators:
+            entity:
+                class: App\Entity\Administrator
+                property: username
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        admin:
+            pattern: ^/
+            provider: administrators
+            http_basic:
+                realm: My Super Secret Admin Area
+
         main:
             anonymous: true
             lazy: true
@@ -20,5 +35,5 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }

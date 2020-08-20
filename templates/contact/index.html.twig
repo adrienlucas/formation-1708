@@ -6,7 +6,12 @@
     {{ form_start(contactForm) }}
         {{ form_row(contactForm.email) }}
         {{ form_row(contactForm.message) }}
-        <input type="submit" value="Contacter"/>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <input type="submit" value="Contacter"/>
+        {% else %}
+            Only Admins can submit this form.
+        {% endif %}
     {{ form_end(contactForm) }}
 
 {% endblock %}
